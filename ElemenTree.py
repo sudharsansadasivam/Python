@@ -5,7 +5,7 @@ f=open('xmlDataExtract.csv','w')
 my=csv.writer(f,delimiter=' ',lineterminator='\n')
 head=['s.no','Attribute Name','Visible Name']
 my.writerow(head)
-root = ET.parse('C:\\Users\\sudharsan.sadasivam\\Documents\\python\\attribute.xml').getroot()
+root = ET.parse('xmlFilePath').getroot()
 for type_tag in root.findall('typedef/attribute'):
     print(type_tag)
     attributeValue = type_tag.get('name')
