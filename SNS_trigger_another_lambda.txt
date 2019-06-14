@@ -1,0 +1,46 @@
+
+SNS to Trigger another account lambda
+
+Steps Create SNS Account A --> Add persmission (refer below example) 
+
+aws sns add-permission \
+    --region us-east-1 \
+    --topic-arn Amazon SNS topic arn \
+    --label lambda-access \
+    --aws-account-id B \
+    --action-name Subscribe ListSubscriptionsByTopic Receive
+
+
+ex: (execute Account A)
+
+aws sns add-permission     --region us-east-1     --topic-arn "arn:aws:sns:us-east-1:707079114649:snsslave"     --label lambda-access     --aws-account-id "450488471598"     --action-name Subscribe ListSubscriptionsByTopic Receive --profile slave
+
+
+
+Steps Create lambda Account B --> allow the invoke function
+
+aws lambda add-permission \
+    --function-name SNS-X-Account \
+    --statement-id sns-x-account \
+    --action "lambda:InvokeFunction" \
+    --principal sns.amazonaws.com \
+    --source-arn Amazon SNS topic arn 
+
+ex: (execute Account B)
+aws lambda add-permission     --function-name "masterlambda"     --statement-id "masterlambda"     --action "lambda:InvokeFunction" --principal sns.amazonaws.com     --source-arn "arn:aws:sns:us-east-1:707079114649:snsslave" --profile master
+
+
+
+
+Steps subscribe lambda to SNS topic 
+
+aws sns subscribe \
+    --topic-arn Amazon SNS topic arn \
+    --protocol lambda \
+    --notification-endpoint arn:aws:lambda:us-east-1:B:function:SNS-X-Account
+
+ex: (execute Account B)
+
+aws sns subscribe     --topic-arn "arn:aws:sns:us-east-1:707079114649:snsslave"     --protocol lambda     --notification-endpoint "arn:aws:lambda:us-east-1:450488471598:function:masterlambda" --profile master
+
+
