@@ -1,7 +1,11 @@
 
 SNS to Trigger another account lambda
 
-Steps Create SNS Account A --> Add persmission (refer below example) 
+
+aws configure --profile master
+aws configure --profile slave
+
+Step1 : Create SNS Account A --> Add persmission (refer below example) 
 
 aws sns add-permission \
     --region us-east-1 \
@@ -11,13 +15,13 @@ aws sns add-permission \
     --action-name Subscribe ListSubscriptionsByTopic Receive
 
 
-ex: (execute Account A)
+ex: (execute Account A -Slave)
 
 aws sns add-permission     --region us-east-1     --topic-arn "arn:aws:sns:us-east-1:707079114649:snsslave"     --label lambda-access     --aws-account-id "450488471598"     --action-name Subscribe ListSubscriptionsByTopic Receive --profile slave
 
 
 
-Steps Create lambda Account B --> allow the invoke function
+Step 2:  Create lambda Account B --> allow the invoke function
 
 aws lambda add-permission \
     --function-name SNS-X-Account \
@@ -32,7 +36,7 @@ aws lambda add-permission     --function-name "masterlambda"     --statement-id 
 
 
 
-Steps subscribe lambda to SNS topic 
+Step 3 : subscribe lambda to SNS topic 
 
 aws sns subscribe \
     --topic-arn Amazon SNS topic arn \
